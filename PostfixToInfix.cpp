@@ -2,7 +2,8 @@
 //
 
 #include <iostream>
-#include <queue>
+#include <stack>
+#include <string>
 using namespace std;
 
 bool IsOperand(char c) {
@@ -12,35 +13,39 @@ bool IsOperand(char c) {
     return false;
 }
 
+
+
 string PostfixToInfix(string postfix) 
 {
-    queue<string> res;
+    stack<string> res;
     for (int i = 0; i < postfix.length();i++) {
         string exp = "";
         if (IsOperand(postfix[i])) {
-            exp += postfix[i];
+            while (IsOperand(postfix[i])) {
+                exp += postfix[i];
+                i++;
+            }
             res.push(exp);
         }
-        else 
+        else if (postfix[i] == ' ') {
+            continue;
+        }
+        else
         {
-            exp += (i == postfix.length()-1)?"":"(";
-            while (!res.empty()) {
-                exp += res.front();
-                res.pop();
-                if (!res.empty())
-                    exp += postfix[i];
-            }
-            exp += (i == postfix.length() - 1) ? "" : ")";
-            res.push(exp);
+            string top1 = res.top();
+            res.pop();
+            string top2 = res.top();
+            res.pop();
+            res.push('(' + top2 + postfix[i] + top1 + ')');
         }
     }
-    return res.front();
+    return res.top();
 }
 
 int main()
 {
     string s;
-    cin >> s;
+    getline(cin, s);
     cout << PostfixToInfix(s);
 }
 
